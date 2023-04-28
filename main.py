@@ -3,29 +3,49 @@ import reggiano_cheese, provolone_cheese, mozzarella_cheese, parmesan_cheese
 import thin_crust_dough, thick_crust_dough
 import chicago_pizza, sicilian_pizza, newyork_style_pizza, greek_pizza
 
+import os.path
+import json
+
 class Admin:
     def __init__(self):
         self.pizza_prices = {}
         self.sauce_prices = {}
         self.cheese_prices = {}
         self.dough_prices = {}
-        
-        for pizza in ['Greek', 'Chicago', 'NewYork', 'Sicilian']:
-            price = float(input(f"Enter the price for {pizza} pizza: "))
-            self.pizza_prices[pizza] = price
+
+        if os.path.isfile('prices.json'):
+            with open('prices.json', 'r') as f:
+                prices = json.load(f)
+                self.pizza_prices = prices['pizza_prices']
+                self.sauce_prices = prices['sauce_prices']
+                self.cheese_prices = prices['cheese_prices']
+                self.dough_prices = prices['dough_prices']
+        else:
+            for pizza in ['Greek', 'Chicago', 'NewYork', 'Sicilian']:
+                price = float(input(f"Enter the price for {pizza} pizza: "))
+                self.pizza_prices[pizza] = price
+                
+            for sauce in ['PlumTomato', 'Marinara', 'Barbecue', 'Pumpkin']:
+                price = float(input(f"Enter the price for {sauce} sauce: "))
+                self.sauce_prices[sauce] = price
+                
+            for cheese in ['Mozzarella', 'Reggiano', 'Provolone', 'Parmesan']:
+                price = float(input(f"Enter the price for {cheese} cheese: "))
+                self.cheese_prices[cheese] = price
+                
+            for dough in ['ThinCrust', 'ThickCrust']:
+                price = float(input(f"Enter the price for {dough} dough: "))
+                self.dough_prices[dough] = price
             
-        for sauce in ['PlumTomato', 'Marinara', 'Barbecue', 'Pumpkin']:
-            price = float(input(f"Enter the price for {sauce} sauce: "))
-            self.sauce_prices[sauce] = price
-            
-        for cheese in ['Mozzarella', 'Reggiano', 'Provolone', 'Parmesan']:
-            price = float(input(f"Enter the price for {cheese} cheese: "))
-            self.cheese_prices[cheese] = price
-            
-        for dough in ['ThinCrust', 'ThickCrust']:
-            price = float(input(f"Enter the price for {dough} dough: "))
-            self.dough_prices[dough] = price
-            
+            with open('prices.json', 'w') as f:
+                prices = {
+                    'pizza_prices': self.pizza_prices,
+                    'sauce_prices': self.sauce_prices,
+                    'cheese_prices': self.cheese_prices,
+                    'dough_prices': self.dough_prices,
+                }
+                json.dump(prices, f)
+
     def get_pizza_price(self, pizza_type):
         return self.pizza_prices[pizza_type]
 
@@ -37,6 +57,7 @@ class Admin:
 
     def get_dough_price(self, dough_type):
         return self.dough_prices[dough_type]
+
 
 def main():
     admin = Admin()
